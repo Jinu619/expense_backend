@@ -9,8 +9,10 @@ const index = (req, res) => {
 };
 
 const listExpense = async (req, res) => {
+    const userId = req.user ? req.user.userId : null;
+    
     try {
-        const Expenses = await Expense.findAll();
+        const Expenses = await Expense.findAll({ where: { userId } });
         res.status(200).json({message:'success',data:Expenses});
         
     } catch (error) {
@@ -19,13 +21,14 @@ const listExpense = async (req, res) => {
 }
 
 const createExpense = async (req, res) => {
+    const userId = req.user ? req.user.userId : null;
     try {
         const { error } = createExpenseSchema.validate(req.body);
         if (error) {
             return res.status(400).json({ message: "Validation error", details: error.details });
         }
 
-        const newExpense = await Expense.create(req.body);
+        const newExpense = await Expense.create({ ...req.body, userId });
         res.status(201).json({ message: 'Expense created successfully', data: newExpense });
 
     } catch (error) {
@@ -35,8 +38,9 @@ const createExpense = async (req, res) => {
 
 const searchExpense = async (req, res) => {
     const { id } = req.params;
+    const userId = req.user ? req.user.userId : null;
     try {
-        const expense = await Expense.findByPk(id);
+        const expense = await Expense.findOne({ where: { id, userId } });
         if (!expense) {
             return res.status(404).json({ message: "Expense not found" });
         }
@@ -47,12 +51,13 @@ const searchExpense = async (req, res) => {
 }
 const updateExpense = async (req, res) => {
     const { id } = req.params;
+    const userId = req.user ? req.user.userId : null;
     try {
         const { error } = updateExpenseSchema.validate(req.body);
         if (error) {
             return res.status(400).json({ message: "Validation error", details: error.details });
         }
-        const expense = await Expense.findByPk(id);
+        const expense = await Expense.findOne({ where: { id, userId } });
         if (!expense) {
             return res.status(404).json({ message: "Expense not found" });
         }
@@ -65,8 +70,9 @@ const updateExpense = async (req, res) => {
 
 const deleteExpense = async (req, res) => {
     const { id } = req.params;
+    const userId = req.user ? req.user.userId : null;
     try {
-        const expense = await Expense.findByPk(id);
+        const expense = await Expense.findOne({ where: { id, userId } });
         if (!expense) {
             return res.status(404).json({ message: "Expense not found" });
         }

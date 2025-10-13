@@ -1,23 +1,11 @@
 const { DataTypes } = require('sequelize');
 
 module.exports = (sequelize) => {
-    const Expense = sequelize.define('Expense', {
+    const CreditCard = sequelize.define('CreditCard', {
         id: {
             type: DataTypes.INTEGER,
             autoIncrement: true,
             primaryKey: true
-        },
-        date: {
-            type: DataTypes.DATE,
-            allowNull: false
-        },
-        categoryId: {
-            type: DataTypes.INTEGER,
-            allowNull: false,
-            references: {
-                model: 'category',
-                key: 'id'
-            }
         },
         userId: {
             type: DataTypes.INTEGER,
@@ -27,23 +15,28 @@ module.exports = (sequelize) => {
                 key: 'id'
             }
         },
-        amount: {
+        cardName: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
+        billAmount: {
             type: DataTypes.FLOAT,
             allowNull: false
         },
-        paymentMode: {
-            type: DataTypes.STRING,
+
+        statementDay: {
+            type: DataTypes.INTEGER,
             allowNull: false
         },
-        description: {
-            type: DataTypes.STRING,
-            allowNull: true
+        billDay: {
+            type: DataTypes.INTEGER,
+            allowNull: false
         }
         
     }, {
-        tableName: 'expense',
+        tableName: 'creditcards',
         timestamps: true,
     });
-    return Expense;
+    return CreditCard;
 };
 
