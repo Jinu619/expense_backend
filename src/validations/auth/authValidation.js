@@ -29,6 +29,11 @@ const registerSchema = Joi.object({
         'string.empty': 'Password is required',
         'any.required': 'Password is required',
         'string.min': 'Password must be at least 6 characters long'
+    }),
+    pin: Joi.string().pattern(/^\d{4}$/).required().messages({
+        'string.pattern.base': 'Pin must be 4 digits',
+        'string.empty': 'Pin is required',
+        'any.required': 'Pin is required'
     })
 });
 

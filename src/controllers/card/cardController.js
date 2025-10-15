@@ -1,4 +1,4 @@
-const { CreditCard } = require('../../models');
+const { CreditCard, CreditCardTransaction } = require('../../models');
 const { createCardSchema, updateCardSchema } = require('../../validations/card/card.validation');
 const { Op } = require('sequelize');
 
@@ -12,7 +12,37 @@ const listCard = async (req, res) => {
 
     try {
         const cards = await CreditCard.findAll({ where: { userId } });
-        res.status(200).json({ message: 'success', data: cards });
+        let response = [];
+        for (const card of cards) {
+            let now = new Date();
+            let startOfMonth, endOfMonth;
+            startOfMonth = new Date(now.getFullYear(), now.getMonth(), card.statementDay);
+            if (now.getDate() >= 1) {
+                startOfMonth = new Date(now.getFullYear(), now.getMonth() - 1, card.statementDay);
+                endOfMonth = new Date(now.getFullYear(), now.getMonth(), card.statementDay);
+            } else {
+                startOfMonth = new Date(now.getFullYear(), now.getMonth() - 2, card.statementDay);
+                endOfMonth = new Date(now.getFullYear(), now.getMonth() - 1, card.statementDay);
+            }
+
+            let transactions = await CreditCardTransaction.findOne({
+                attributes: [
+                    [CreditCardTransaction.sequelize.fn('SUM', CreditCardTransaction.sequelize.col('amount')), 'totalAmount']
+                ],
+                where: {
+                    cardId: card.id,
+                    userId,
+                    purchaseDate: {
+                        [Op.between]: [startOfMonth, endOfMonth]
+                    }
+                },
+                raw: true,
+            });
+
+            card.dataValues.billAmount = transactions.totalAmount || 0;
+            response.push(card.dataValues);
+        }
+        res.status(200).json({ message: 'success', data: response });
 
     } catch (error) {
         res.status(500).json({ message: "Something went wrong", 'error': error.message });

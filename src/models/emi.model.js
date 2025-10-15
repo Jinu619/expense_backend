@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
 
 module.exports = (sequelize) => {
-    const CreditCard = sequelize.define('CreditCard', {
+    const Emi = sequelize.define('Emi', {
         id: {
             type: DataTypes.INTEGER,
             autoIncrement: true,
@@ -15,33 +15,42 @@ module.exports = (sequelize) => {
                 key: 'id'
             }
         },
-        cardName: {
+        itemName: {
             type: DataTypes.STRING,
             allowNull: false
         },
-        billAmount: {
+        monthlyAmount: {
             type: DataTypes.FLOAT,
             allowNull: false
         },
-
-        statementDay: {
+        tenure: {
             type: DataTypes.INTEGER,
+            allowNull: false,
+            defaultValue: 0
+        },
+        startDate: {
+            type: DataTypes.DATEONLY,
             allowNull: false
         },
-        billDay: {
-            type: DataTypes.INTEGER,
-            allowNull: false
-        },
-        status:{
+        paid: {
             type: DataTypes.INTEGER,
             allowNull: true,
             defaultValue: 0
+        },
+        status: {
+            type: DataTypes.INTEGER,
+            allowNull: true,
+            defaultValue: 0
+        },
+        firstDueDate: {
+            type: DataTypes.DATEONLY,
+            allowNull: false
         }
         
     }, {
-        tableName: 'creditcards',
+        tableName: 'emi',
         timestamps: true,
     });
-    return CreditCard;
+    return Emi;
 };
 

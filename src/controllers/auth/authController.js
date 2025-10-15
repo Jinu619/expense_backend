@@ -36,7 +36,7 @@ const login = async (req,res)=>{
     }
 }
 const register = async (req, res) => {
-    const { name, username, email, password } = req.body;
+    const { name, username, email, password, pin } = req.body;
 
     // Validate request body
     const { error, value } = registerSchema.validate(req.body);
@@ -50,11 +50,13 @@ const register = async (req, res) => {
             return res.status(400).json({ message: "User already exists" });
         }
         const hashedPassword = await bcrypt.hash(password, 10);
+        const hashedPin = await bcrypt.hash(pin, 10);
 
         const newUser = await User.create({
             name,
             username,
             email,
+            pin: hashedPin,
             password: hashedPassword
         });
 

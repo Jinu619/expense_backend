@@ -25,6 +25,10 @@ module.exports = (sequelize) => {
             type: DataTypes.STRING,
             allowNull: false,
             unique: true
+        },
+        pin: {
+            type: DataTypes.STRING,
+            allowNull: false
         }
     }, {
         tableName: 'users',
