@@ -6,6 +6,8 @@ const Expense = require('./Expense.model')(sequelize);
 const CreditCard = require('./creditCard.model')(sequelize);
 const CreditCardTransaction = require('./creditCardTransaction.model')(sequelize);
 const Emi = require('./emi.model')(sequelize);
+const Bank = require('./bank.model')(sequelize);
+const BankTransaction = require('./bankTransaction.model')(sequelize);
 
 // Define associations
 User.hasMany(Expense, { foreignKey: 'userId' });
@@ -26,6 +28,16 @@ CreditCard.hasMany(CreditCardTransaction, { foreignKey: 'cardId' });
 Emi.belongsTo(User, { foreignKey: 'userId' });
 User.hasMany(Emi, { foreignKey: 'userId' });
 
+Bank.belongsTo(User, { foreignKey: 'userId' });
+User.hasMany(Bank, { foreignKey: 'userId' });
+
+BankTransaction.belongsTo(User, { foreignKey: 'userId' });
+User.hasMany(BankTransaction, { foreignKey: 'userId' });
+BankTransaction.belongsTo(Bank, { foreignKey: 'bankId' });
+Bank.hasMany(BankTransaction, { foreignKey: 'bankId' });
+BankTransaction.belongsTo(Category, { foreignKey: 'categoryId' });
+Category.hasMany(BankTransaction, { foreignKey: 'categoryId' });
+
 module.exports = {
     sequelize,
     User,
@@ -33,5 +45,7 @@ module.exports = {
     Expense,
     CreditCard,
     CreditCardTransaction,
-    Emi
+    Emi,
+    Bank,
+    BankTransaction
 };

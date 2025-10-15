@@ -82,9 +82,34 @@ const updatePin = async (req, res) => {
         res.status(500).json({ message: "Something went wrong", 'error': error.message });
     }
 }
+
+const validatePin = async (req, res) => {
+    const userId = req.user ? req.user.userId : null;
+    const { pin } = req.body;
+    if (!pin) {
+        return res.status(400).json({ message: "Validation error", details: "pin is required" });
+    }
+    try {
+        const user = await User.findOne({ where: { id: userId } });
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        let fixedHash = user.pin.replace('$2y$', '$2a$');
+        const isMatch = await bcrypt.compare(pin, fixedHash);
+        if (!isMatch) {
+            return res.status(400).json({ message: "Pin is wrong", status: "Failed" });
+        }
+
+        res.status(200).json({ message: "Pin is valid", status: "ok" });
+    } catch (error) {
+        res.status(500).json({ message: "Something went wrong", 'error': error.message });
+    }
+}
 module.exports = {
     getprofile,
     updateprofile,
     changePassword,
-    updatePin
+    updatePin,
+    validatePin
 };

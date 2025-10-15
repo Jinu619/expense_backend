@@ -9,6 +9,7 @@ const commonRoutes = require('./routes/common.routes');
 const cardsRoutes = require('./routes/cards.routes');
 const emiRoutes = require('./routes/emi.routes');
 const profileRoutes = require('./routes/profile.routes');
+const walletRoutes = require('./routes/wallet.routes');
 const authenticateJWT = require('./middlewares/auth.middlware');
 
 
@@ -27,6 +28,7 @@ app.use('/api/category', authenticateJWT, commonRoutes);
 app.use('/api/cards', authenticateJWT, cardsRoutes);
 app.use('/api/emi', authenticateJWT, emiRoutes);
 app.use('/api/user', authenticateJWT, profileRoutes);
+app.use('/api/bank', authenticateJWT, walletRoutes);
 
 app.get('/', (req, res) => {
     res.send('Hello World from Node.js Boilerplate!');
